@@ -5,24 +5,24 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-#include "esp_task_wdt.h"   // 👈 ADD THIS
+#include "esp_task_wdt.h"   
 
 void app_main(void)
 {
 
-    esp_task_wdt_deinit();   // <-- THIS IS THE FIX
+    esp_task_wdt_deinit();   
 
-    /* ================= WIFI ================= */
+    //  WIFI 
     WiFi_Init();
 
     while (!WiFi_IsConnected()) {
         vTaskDelay(pdMS_TO_TICKS(500));
     }
 
-    /* ================= CAMERA ================= */
+    //  CAMERA 
     App_Camera_Init();
     App_Camera_StartTask();
 
-    /* ================= UDP STREAM ================= */
+    //  UDP STREAM 
     App_WiFi_StartTask();   // UDP sender
 }
