@@ -15,19 +15,19 @@
 #define PORT 5000
 #define MAX_PACKET 1500
 
-/* ================= FRAME BUFFER ================= */
+// FRAME BUFFER
 struct FrameBuffer {
     uint16_t total_chunks = 0;
     uint16_t received = 0;
     std::vector<std::vector<uint8_t>> chunks;
 };
 
-/* ================= GLOBAL ================= */
+//  GLOBAL 
 std::mutex frame_mutex;
 cv::Mat latest_frame;
 std::atomic<bool> running(true);
 
-/* ================= DISPLAY THREAD ================= */
+//  DISPLAY THREAD 
 void display_thread()
 {
     cv::namedWindow("ESP32 Live", cv::WINDOW_AUTOSIZE);
@@ -54,10 +54,10 @@ void display_thread()
     cv::destroyAllWindows();
 }
 
-/* ================= MAIN ================= */
+//   MAIN 
 int main()
 {
-    /* ===== Socket ===== */
+    //  Socket
     int sock = socket(AF_INET, SOCK_DGRAM, 0);
 
     int rcvbuf = 8 * 1024 * 1024;
@@ -72,7 +72,7 @@ int main()
 
     std::cout << "Waiting for UDP stream...\n";
 
-    /* ===== Start display thread ===== */
+    //   Start display thread 
     std::thread viewer(display_thread);
 
     std::unordered_map<uint16_t, FrameBuffer> frames;
@@ -81,7 +81,7 @@ int main()
     int fps = 0;
     auto t0 = std::chrono::steady_clock::now();
 
-    /* ===== UDP receive loop ===== */
+    // UDP receive loop 
     while (running) {
         ssize_t len = recvfrom(sock, buffer, sizeof(buffer), 0, nullptr, nullptr);
         if (len < 8) continue;
@@ -103,7 +103,7 @@ int main()
             fb.received++;
         }
 
-        /* ===== Frame complete ===== */
+       //  Frame complete 
         if (fb.received == fb.total_chunks) {
             std::vector<uint8_t> jpeg;
             for (auto &c : fb.chunks)
