@@ -11,21 +11,21 @@
 
 static const char *TAG = "APP_CAMERA";
 
-/* Frame queue (camera → wifi) */
+// Frame queue (camera → wifi) 
 QueueHandle_t g_frame_queue = NULL;
 
-/* =====================================================
- * Camera Capture Task (CPU1, 10 FPS, WDT safe)
- * ===================================================== */
+
+// Camera Capture Task (CPU1, 10 FPS, WDT safe)
+ 
 static void camera_task(void *arg)
 {
     uint8_t *buf = NULL;
     size_t len = 0;
     bool warmup = true;
 
-    esp_task_wdt_delete(NULL);   // WDT safe
+    esp_task_wdt_delete(NULL);   
 
-    const TickType_t frame_interval = pdMS_TO_TICKS(500); // ✅ 2 FPS
+    const TickType_t frame_interval = pdMS_TO_TICKS(500); // 2 FPS
     TickType_t last = xTaskGetTickCount();
 
     while (1) {
@@ -68,9 +68,7 @@ static void camera_task(void *arg)
 }
 
 
-/* =====================================================
- * Camera Init
- * ===================================================== */
+
 void App_Camera_Init(void)
 {
     g_frame_queue = xQueueCreate(2, sizeof(jpeg_frame_t));
@@ -88,9 +86,7 @@ void App_Camera_Init(void)
     ESP_LOGI(TAG, "Camera initialized");
 }
 
-/* =====================================================
- * Start Camera Task (PIN TO CPU1)
- * ===================================================== */
+
 void App_Camera_StartTask(void)
 {
     xTaskCreatePinnedToCore(
