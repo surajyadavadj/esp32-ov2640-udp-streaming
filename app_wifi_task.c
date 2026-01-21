@@ -11,27 +11,27 @@
 
 static const char *TAG = "APP_WIFI";
 
-/* 🔴 PC IP & PORT */
+// PC IP & PORT 
 #define SERVER_IP   "192.168.0.135"
 #define SERVER_PORT 5000
 
 #define UDP_CHUNK_SIZE 1400
 
-/* ===== UDP HEADER ===== */
+//  UDP HEADER 
 typedef struct {
     uint16_t frame_id;
     uint16_t chunk_id;
     uint16_t total_chunks;
     uint16_t payload_size;
 } __attribute__((packed)) udp_hdr_t;
-/* ====================== */
+
 
 static void wifi_task(void *arg)
 {
     jpeg_frame_t frame;
     uint16_t frame_id = 0;
 
-    /* Wait for WiFi */
+    //   Wait for WiFi 
     while (!WiFi_IsConnected()) {
         ESP_LOGI(TAG, "Waiting for WiFi...");
         vTaskDelay(pdMS_TO_TICKS(1000));
@@ -39,7 +39,7 @@ static void wifi_task(void *arg)
 
     ESP_LOGI(TAG, "WiFi connected");
 
-    /* UDP socket */
+    // UDP socket 
     int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
 
     struct sockaddr_in dest = {
@@ -86,7 +86,7 @@ static void wifi_task(void *arg)
             }
 
             frame_id++;
-            free(frame.data);   // 🔥 MUST
+            free(frame.data);   
         }
     }
 }
@@ -100,6 +100,6 @@ void App_WiFi_StartTask(void)
         NULL,
         5,
         NULL,
-        1   // 📌 Core 1 (WiFi core)
+        1   
     );
 }
